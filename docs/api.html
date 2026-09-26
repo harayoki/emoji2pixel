@@ -1,0 +1,85 @@
+<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>emoji2pixel JavaScript API</title><style>body{max-width:960px;margin:3rem auto;padding:0 1.2rem;font:16px/1.7 system-ui,sans-serif;background:#101a29;color:#ecf4f9}h1,h2{color:#b0f2dc}a{color:#94d9ff}pre{white-space:pre-wrap;word-break:break-word;background:#1f3045;border-radius:9px;padding:1.1rem;overflow:auto;color:#f6f9ff}code{color:#b4eccf}table{width:100%;border-collapse:collapse}td,th{border-bottom:1px solid #43586d;padding:.6rem;text-align:left;vertical-align:top}button{background:#174d54;color:white;border:1px solid #72c8b6;border-radius:6px;padding:.45rem .9rem;cursor:pointer}.example{margin:1rem 0 2rem}.muted{color:#afc1ce}summary{cursor:pointer}li{margin:.4rem 0}</style></head><body>
+<h1>emoji2pixel JavaScript API</h1><p>この資料はアプリに内蔵されています。元のアプリの開発者ツールで <code>window.EmojiPixelAPI</code> を使ってください。この説明ページにはアプリ本体のAPIはありません。画面操作APIはURLのハッシュと画面表示にも反映されます。</p>
+<h2>まず使う</h2><div class="example"><button type="button" class="copy">コードをコピー</button><pre>const api = window.EmojiPixelAPI;
+await api.setOptions({preset:'nes', size:32, trim:true, symmetry:'normal'});
+api.select('🐱🐶');
+api.setTab('選択済み');
+api.search('');
+await api.download(api.getSelected().join(''), {format:'zip'});</pre></div>
+<h2>AI向け：APIのJSDoc一覧</h2><p><code>api.getAPIInfo()</code> は全公開メソッドの <code>{name, summary, jsdoc}</code> 配列を返します。<code>api.getAPIInfo('setOptions')</code> で1メソッドだけ取得できます。見つからない場合は null。ページの公開APIのJSDocからビルド時に生成します。</p><div class="example"><button type="button" class="copy">コードをコピー</button><pre>const api = window.EmojiPixelAPI;
+console.log(JSON.stringify(api.getAPIInfo(), null, 2));
+console.log(api.getAPIInfo('select'));
+await navigator.clipboard.writeText(JSON.stringify(api.getAPIInfo(), null, 2));</pre></div>
+<h2>絵文字一覧とフォント</h2><table><thead><tr><th>呼び出し</th><th>動作</th></tr></thead><tbody><tr><td><code>api.select(text, {append:false})</code></td><td>絵文字を選択。空文字で解除。未登録文字は「入力文字」に追加。append:true は現在の選択に追加。同じ文字は重複しません。最大256文字。</td></tr><tr><td><code>api.getSelected()</code></td><td>現在の選択文字を配列で返す。</td></tr><tr><td><code>api.getTabs()</code></td><td>タブ名の配列。入力文字が存在すると「入力文字」も表示。</td></tr><tr><td><code>api.setTab(name)</code></td><td>タブを切り替え。例：「動物・自然」「顔・感情」「選択済み」「すべて」。</td></tr><tr><td><code>api.search(query)</code></td><td>検索欄を変更。日本語、英語、別名、絵文字を検索。空文字で解除。</td></tr><tr><td><code>await api.setFont(mode)</code></td><td>system（システム絵文字）、free（Noto Emoji）、color（Noto Color Emoji）、local（読み込み済みフォント）。外部フォントは読み込み完了後に解決。通信エラー時には拒否。</td></tr><tr><td><code>await api.loadFont(file)</code></td><td>File または Blob のローカルフォントを読み込み、選択。ブラウザーのファイル選択ダイアログは開かない。</td></tr></tbody></table>
+<div class="example"><button type="button" class="copy">コードをコピー</button><pre>api.select('🐍🦊');
+api.setTab('動物・自然');
+api.search('snake'); // 英語名でも絞り込めます
+await api.setFont('system');
+// ファイルを持っている場合: await api.loadFont(file);</pre></div>
+<h2>画面の設定</h2><p><code>await api.setOptions({...})</code> は画面の設定を変更し、絵文字一覧を描き直します。<code>api.getOptions()</code> は編集可能な設定と選択状態を返します。<code>api.getSettings()</code> は実際に描画へ渡す設定を返します。指定しなかった項目はそのままです。プリセットを指定した場合は先にプリセット値を適用し、その後に同じ呼び出し内の他の指定を適用します。</p>
+<div class="example"><button type="button" class="copy">コードをコピー</button><pre>await api.setOptions({
+  size:32, background:'custom', backgroundColor:'#243142',
+  trim:true, gapX:1, gapY:2,
+  symmetry:'strict', ditherPattern:'bayer2', ditherRange:25,
+  gammaMode:'rgb', gammaR:0.9, gammaG:1.0, gammaB:1.1,
+  contrast:2, hue:10, saturation:110,
+  layout:'grid', columns:16, rows:16
+});
+console.log(api.getOptions());</pre></div>
+<h3>全オプション</h3><table><thead><tr><th>キー</th><th>値・単位</th></tr></thead><tbody>
+<tr><td><code>preset</code></td><td>nes, micro, msx-sprite, msx-bg, msx2-sprite, msx2-bg, mono2/3/4/8/16, free27/64/125/216/343/512。変更時はプリセットの色・ガンマ・コントラストなどを更新。</td></tr>
+<tr><td><code>nesPattern, microPattern</code></td><td>ファミコンの配色キー（一覧は <code>NESPalettes.presets.map(p =&gt; [p.key,p.name])</code>）、マイコン配色 digital / digital4_1〜digital4_5。</td></tr>
+<tr><td><code>msxPattern, monoPattern, freePattern</code></td><td>MSXは msx / msx2、モノクロは mono2/3/4/8/16、フリーは free27/64/125/216/343/512。現在の機種と一致する場合は色パレットを更新。</td></tr>
+<tr><td><code>size, wide</code></td><td>1〜128の整数 px、横2倍の真偽値。横2倍の設定は機種により無効。</td></tr>
+<tr><td><code>trim</code></td><td>透明な外周の詰め具合。<code>'off'</code>／<code>'small'</code>／<code>'medium'</code>（既定）／<code>'large'</code>。真偽値も受け、<code>true</code>は中、<code>false</code>はなし。</td></tr>
+<tr><td><code>oddCenter</code></td><td>真偽値。右端・下端を1ドット捨てて、中心をちょうど1ドットにする。</td></tr>
+<tr><td><code>alphaThreshold</code></td><td>0〜255の整数。元の絵文字のアルファがこの値より小さい画素を透明にする（既定46）。</td></tr>
+<tr><td><code>scaleX, scaleY</code></td><td>元の絵の拡大・縮小 25〜400（%）。中心はそのまま。</td></tr><tr><td><code>lineKeep, lineRadius, lineThreshold</code></td><td>細い線を残す off / dark / both。線とみなす太さ 1〜8、拾いやすさ 0〜255。</td></tr><tr><td><code>offsetX, offsetY</code></td><td>元の絵をドット単位でずらす -64〜64。拡大・回転のあとにかかる。</td></tr><tr><td><code>rotate, shearX, shearY</code></td><td>元の絵の回転 -180〜180（度）と、横・縦のシアー -60〜60（度）。拡大・縮小の後にかかる。傾けている間は自動左右対称を止める。</td></tr><tr><td><code>trim, symmetry, symmetryBand</code></td><td>透明な外周を詰める off / small / medium / large。左右対称の感度 off / strict / normal / lenient。判定の単位は 8（縦8ドットごと・既定）か 0（絵全体）。</td></tr>
+<tr><td><code>gapX, gapY</code></td><td>文字内側の左右／上下余白 0〜64 px。0で無効。</td></tr>
+<tr><td><code>background, backgroundColor</code></td><td>一覧の背景 default / black / white / grid / custom。customのHEX色は backgroundColor:'#RRGGBB'。MSX BG の出力背景は <code>msxBg</code> を使用。</td></tr>
+<tr><td><code>msxBg, msxVirtualBg, transparentInPalette</code></td><td>MSX BG の背景色（MSXの選択肢か custom）、MSXスプライトの仮想背景色（選択肢のHEX）、仮想背景色に透明を割り当てる真偽値。</td></tr>
+<tr><td><code>ditherPattern, ditherRange</code></td><td>none / bayer2 / lineH / lineV / floyd / jjn / stucki / atkinson / blue16。範囲は5〜100の整数（％）。<code>ditherSpread</code> は0〜100の整数（％）で、色の境目からディザを敷く広がり（既定100＝全面、0＝敷かない）。MSX BGは none / lineH のみ。</td></tr>
+<tr><td><code>gammaMode, gamma, gammaR, gammaG, gammaB</code></td><td>all または rgb、ガンマ値は0.25〜3。all なら gamma、rgb なら各成分を使用。</td></tr>
+<tr><td><code>contrast, hue, saturation</code></td><td>コントラスト0.25〜3、色相 -180〜180 度、彩度0〜200 パーセント。</td></tr>
+<tr><td><code>count, palette, paletteOff</code></td><td>最大色数 1〜512（フリーは任意数、他機種は画面の選択肢に従う）。palette は HEX の文字列またはHEX配列、paletteOff は0から始まる色番号の配列。MSXのパレット色のON/OFFにも対応。</td></tr>
+<tr><td><code>basicPalette, ditherOff</code></td><td>追加色の選択元 custom / digital / msx / msx2 / nes52 / rgb27 / rgb64 / rgb125 / rgb216 / rgb343 / rgb512。ditherOff はディザで使わないHEX色の配列。パレットの色そのものは消さない。</td></tr>
+<tr><td><code>rule, lineBg, nesMatch, msxMatch</code></td><td>free / line、背景色をライン内で使用する真偽値、ファミコン luminance / oklab、MSX rgb / oklab。機種ごとの描画制約は自動適用。</td></tr>
+<tr><td><code>layout, columns, rows</code></td><td>grid / row / column / square。列・行は1〜256の整数。</td></tr>
+<tr><td><code>tileScale, language</code></td><td>一覧倍率 auto / 0.5 / 1 / 2 / 3 / 4 / 5 / 6 / 7 / 8。名前表示 ja / en。</td></tr>
+<tr><td><code>saveFormat, codeFormat, base64, codeScope</code></td><td>保存形式 png / zip、AS CODE形式 js / python / json / text、Base64の真偽値、プレビュー one / all。</td></tr>
+<tr><td><code>tab, search, selected, fontMode</code></td><td>一度の <code>setOptions</code> でタブ、検索文字列、選択文字列、フォントモードも設定可能。fontMode の外部フォントロードも待機。</td></tr>
+</tbody></table><p class="muted"><code>getOptions()</code> が返す現在の値は編集フォームに相当します。MSX BGのように機種側で強制される設定は <code>getSettings()</code> で有効値を確認してください。不明な項目や無効な値はエラーになります。</p>
+<h2>まとめて作る</h2>
+<div class="example"><button type="button" class="copy">コードをコピー</button><pre>// 感度×詰め具合の総当たりを1回で作り、左右一致率で並べる
+const grid = [];
+for (const symmetry of ['off','normal','lenient'])
+  for (const trim of ['off','small','medium','large'])
+    grid.push({symmetry, trim});
+
+const out = api.renderVariants('🐱', {preset:'nes', size:16}, grid, {format:'png', sheet:true, columns:4});
+out.variants
+  .map((v, i) =&gt; ({i, ...v.options, ...v.metrics}))
+  .sort((a, b) =&gt; b.mirrorMatch - a.mirrorMatch);</pre></div>
+<h2>設定の下調べ</h2><table><thead><tr><th>呼び出し</th><th>返り値</th></tr></thead><tbody>
+<tr><td><code>api.describeOptions()</code></td><td>設定できる項目の一覧。各項目に <code>type</code>（boolean / integer / number / enum / color / string / array）、現在値 <code>value</code>、選択式なら <code>choices</code>、数値なら <code>min</code>・<code>max</code>、そして<strong>今のプリセットで使えるか</strong>を示す <code>available</code> が付く。実装が変わっても、その時点で指定できる項目がそのまま返る。</td></tr>
+<tr><td><code>api.listChoices(name?)</code></td><td>選択式の項目の許容値。名前を省くと選択式の全項目をまとめて返す。<code>listChoices('preset')</code> は <code>msx2-bg</code>・<code>mono4</code> のような実際に指定できるプリセット名を返す。</td></tr>
+<tr><td><code>await api.waitIdle({timeout})</code></td><td>一覧の描画とフォント読み込みが終わるまで待つ。終われば true、時間切れなら false。設定変更のあとに固定時間の待ちを入れる必要がなくなる。</td></tr>
+<tr><td><code>api.snapshot()</code></td><td>今の画面の要約。プリセット・サイズ・タブ・検索語・フォントの状態・選択中の文字・一覧の件数・字形なしで隠した数・描画中かどうか・拡大表示の有無。</td></tr>
+</tbody></table>
+<div class="example"><button type="button" class="copy">コードをコピー</button><pre>// 今のモードで指定できる項目だけを拾う
+const usable = Object.entries(api.describeOptions())
+  .filter(([, item]) =&gt; item.available)
+  .map(([key, item]) =&gt; key);
+
+await api.setOptions({preset:'msx-bg', msxBg:'#3eb849'});
+await api.waitIdle();
+api.snapshot();</pre></div>
+<h2>変換と保存</h2><table><thead><tr><th>呼び出し</th><th>返り値</th></tr></thead><tbody><tr><td><code>api.render(text, options?)</code></td><td>スプライトシートを描いた Canvas。</td></tr>
+<tr><td><code>api.renderTile(char, options?)</code></td><td>1文字ぶんの Canvas。<code>metadata</code> に自動左右対称の適用有無・判定値・対称軸のずれが付く。</td></tr>
+<tr><td><code>api.renderVariants(char, base?, variants, options?)</code></td><td>同じ文字を設定違いでまとめて描く。画面には触れず、再描画も待たないので、総当たりが1回の呼び出しで終わる。各結果に <code>metrics</code>（使用色数・不透明画素数・描画率・左右一致率・対称の判定値）が付く。<code>format</code> は canvas（既定）／png／code、<code>sheet:true</code> で全部を1枚の Canvas にも並べる。</td></tr><tr><td><code>api.toCode(text, options?)</code></td><td>AS CODE文字列。format: js / python / json / text、base64:true も指定可能。</td></tr><tr><td><code>await api.download(text, options?)</code></td><td>PNGまたはZIPを保存し、ファイル名を返す。format:'png' | 'zip'、filenameで保存名を指定。</td></tr></tbody></table><p>一回限りの <code>options</code> に <code>preset</code> を渡すと、その機種の色数・パレット・色の制約も一緒に切り替わります（画面の設定は変えません）。<code>palette</code> や <code>count</code> を同時に渡せば、そちらが優先されます。</p><p>これらの <code>options</code> は一回限りの描画設定です。<code>size</code>、<code>count</code>、<code>palette</code>、<code>symmetry</code>、<code>trim</code>、<code>layout</code>、<code>columns</code>、<code>rows</code> などを指定でき、画面状態は変更しません。画面側を変更するには <code>setOptions</code> を使います。文字列は1〜256文字、サイズは1〜128pxです。</p>
+<div class="example"><button type="button" class="copy">コードをコピー</button><pre>const canvas = api.render('😀👾', {size:16, layout:'row'});
+console.log(canvas.width, canvas.height);
+const source = api.toCode('😀👾', {format:'python', base64:true});
+await navigator.clipboard.writeText(source); // AIへ渡すコードをコピー
+await api.download('😀👾', {format:'zip', filename:'my-sprites.zip'});</pre></div>
+<p><button type="button" id="close">この説明ページを閉じる</button></p><script>document.addEventListener('click',async e=>{if(e.target.id==='close'){window.close();return}if(!e.target.classList.contains('copy'))return;let button=e.target,source=button.nextElementSibling.textContent;try{await navigator.clipboard.writeText(source);button.textContent='コピーしました'}catch{let range=document.createRange();range.selectNodeContents(button.nextElementSibling);getSelection().removeAllRanges();getSelection().addRange(range);button.textContent='選択しました。コピーしてください'}setTimeout(()=>button.textContent='コードをコピー',2200)});</script></body></html>
