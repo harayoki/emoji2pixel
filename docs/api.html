@@ -10,7 +10,7 @@ await api.download(api.getSelected().join(''), {format:'zip'});</pre></div>
 console.log(JSON.stringify(api.getAPIInfo(), null, 2));
 console.log(api.getAPIInfo('select'));
 await navigator.clipboard.writeText(JSON.stringify(api.getAPIInfo(), null, 2));</pre></div>
-<h2>絵文字一覧とフォント</h2><table><thead><tr><th>呼び出し</th><th>動作</th></tr></thead><tbody><tr><td><code>api.select(text, {append:false})</code></td><td>絵文字を選択。空文字で解除。未登録文字は「入力文字」に追加。append:true は現在の選択に追加。同じ文字は重複しません。最大256文字。</td></tr><tr><td><code>api.getSelected()</code></td><td>現在の選択文字を配列で返す。</td></tr><tr><td><code>api.getTabs()</code></td><td>タブ名の配列。入力文字が存在すると「入力文字」も表示。</td></tr><tr><td><code>api.setTab(name)</code></td><td>タブを切り替え。例：「動物・自然」「顔・感情」「選択済み」「すべて」。</td></tr><tr><td><code>api.search(query)</code></td><td>検索欄を変更。日本語、英語、別名、絵文字を検索。空文字で解除。</td></tr><tr><td><code>await api.setFont(mode)</code></td><td>system（システム絵文字）、free（Noto Emoji）、color（Noto Color Emoji）、local（読み込み済みフォント）。外部フォントは読み込み完了後に解決。通信エラー時には拒否。</td></tr><tr><td><code>await api.loadFont(file)</code></td><td>File または Blob のローカルフォントを読み込み、選択。ブラウザーのファイル選択ダイアログは開かない。</td></tr></tbody></table>
+<h2>絵文字一覧とフォント</h2><table><thead><tr><th>呼び出し</th><th>動作</th></tr></thead><tbody><tr><td><code>api.select(text, {append:false})</code></td><td>絵文字を選択。空文字で解除。未登録文字は「入力文字」に追加。append:true は現在の選択に追加。同じ文字は重複しません。最大256文字。</td></tr><tr><td><code>api.getSelected()</code></td><td>現在の選択文字を配列で返す。</td></tr><tr><td><code>api.getTabs()</code></td><td>タブ名の配列。入力文字が存在すると「入力文字」も表示。</td></tr><tr><td><code>api.setTab(name)</code></td><td>タブを切り替え。例：「動物・自然」「顔・感情」「選択済み」「すべて」。英語の別名も使える：all / selected / faces（emotions）/ people（body）/ nature（animals）/ food（drink）/ places（travel）/ objects（symbols）/ custom（text）。</td></tr><tr><td><code>api.search(query)</code></td><td>検索欄を変更。日本語、英語、別名、絵文字を検索。空文字で解除。</td></tr><tr><td><code>await api.setFont(mode)</code></td><td>system（システム絵文字）、free（Noto Emoji）、color（Noto Color Emoji）、local（読み込み済みフォント）。外部フォントは読み込み完了後に解決。通信エラー時には拒否。</td></tr><tr><td><code>await api.loadFont(file)</code></td><td>File または Blob のローカルフォントを読み込み、選択。ブラウザーのファイル選択ダイアログは開かない。</td></tr></tbody></table>
 <div class="example"><button type="button" class="copy">コードをコピー</button><pre>api.select('🐍🦊');
 api.setTab('動物・自然');
 api.search('snake'); // 英語名でも絞り込めます
@@ -23,7 +23,7 @@ await api.setFont('system');
   symmetry:'strict', ditherPattern:'bayer2', ditherRange:25,
   gammaMode:'rgb', gammaR:0.9, gammaG:1.0, gammaB:1.1,
   contrast:2, hue:10, saturation:110,
-  layout:'grid', columns:16, rows:16
+  layout:'grid', columns:16
 });
 console.log(api.getOptions());</pre></div>
 <h3>全オプション</h3><table><thead><tr><th>キー</th><th>値・単位</th></tr></thead><tbody>
@@ -34,7 +34,7 @@ console.log(api.getOptions());</pre></div>
 <tr><td><code>trim</code></td><td>透明な外周の詰め具合。<code>'off'</code>／<code>'small'</code>／<code>'medium'</code>（既定）／<code>'large'</code>。真偽値も受け、<code>true</code>は中、<code>false</code>はなし。</td></tr>
 <tr><td><code>oddCenter</code></td><td>真偽値。右端・下端を1ドット捨てて、中心をちょうど1ドットにする。</td></tr>
 <tr><td><code>alphaThreshold</code></td><td>0〜255の整数。元の絵文字のアルファがこの値より小さい画素を透明にする（既定46）。</td></tr>
-<tr><td><code>scaleX, scaleY</code></td><td>元の絵の拡大・縮小 25〜400（%）。中心はそのまま。</td></tr><tr><td><code>lineKeep, lineRadius, lineThreshold</code></td><td>細い線を残す off / dark / both。線とみなす太さ 1〜8、拾いやすさ 0〜255。</td></tr><tr><td><code>offsetX, offsetY</code></td><td>元の絵をドット単位でずらす -64〜64。拡大・回転のあとにかかる。</td></tr><tr><td><code>rotate, shearX, shearY</code></td><td>元の絵の回転 -180〜180（度）と、横・縦のシアー -60〜60（度）。拡大・縮小の後にかかる。傾けている間は自動左右対称を止める。</td></tr><tr><td><code>trim, symmetry, symmetryBand</code></td><td>透明な外周を詰める off / small / medium / large。左右対称の感度 off / strict / normal / lenient。判定の単位は 8（縦8ドットごと・既定）か 0（絵全体）。</td></tr>
+<tr><td><code>scaleX, scaleY</code></td><td>元の絵の拡大・縮小 25〜400（%）。中心はそのまま。</td></tr><tr><td><code>gradBrightness, gradHue, gradBrightnessFlip, gradHueFlip</code></td><td>上下グラデを効き具合のマスクにした明るさ（輝度）-100〜100（%）と色相 -180〜180（度）。上端で0、下端で最大。Flip を true にすると上下が入れ替わる。</td></tr><tr><td><code>lineKeep, lineRadius, lineThreshold</code></td><td>細い線を残す off / dark / both。線とみなす太さ 1〜8、拾いやすさ 0〜255。</td></tr><tr><td><code>offsetX, offsetY</code></td><td>元の絵をドット単位でずらす -64〜64。拡大・回転のあとにかかる。</td></tr><tr><td><code>rotate, shearX, shearY</code></td><td>元の絵の回転 -180〜180（度）と、横・縦のシアー -60〜60（度）。拡大・縮小の後にかかる。傾けている間は自動左右対称を止める。</td></tr><tr><td><code>trim, symmetry, symmetryBand</code></td><td>透明な外周を詰める off / small / medium / large。左右対称の感度 off / strict / normal / lenient。判定の単位は 8（縦8ドットごと・既定）か 0（絵全体）。</td></tr>
 <tr><td><code>gapX, gapY</code></td><td>文字内側の左右／上下余白 0〜64 px。0で無効。</td></tr>
 <tr><td><code>background, backgroundColor</code></td><td>一覧の背景 default / black / white / grid / custom。customのHEX色は backgroundColor:'#RRGGBB'。MSX BG の出力背景は <code>msxBg</code> を使用。</td></tr>
 <tr><td><code>msxBg, msxVirtualBg, transparentInPalette</code></td><td>MSX BG の背景色（MSXの選択肢か custom）、MSXスプライトの仮想背景色（選択肢のHEX）、仮想背景色に透明を割り当てる真偽値。</td></tr>
@@ -44,7 +44,7 @@ console.log(api.getOptions());</pre></div>
 <tr><td><code>count, palette, paletteOff</code></td><td>最大色数 1〜512（フリーは任意数、他機種は画面の選択肢に従う）。palette は HEX の文字列またはHEX配列、paletteOff は0から始まる色番号の配列。MSXのパレット色のON/OFFにも対応。</td></tr>
 <tr><td><code>basicPalette, ditherOff</code></td><td>追加色の選択元 custom / digital / msx / msx2 / nes52 / rgb27 / rgb64 / rgb125 / rgb216 / rgb343 / rgb512。ditherOff はディザで使わないHEX色の配列。パレットの色そのものは消さない。</td></tr>
 <tr><td><code>rule, lineBg, nesMatch, msxMatch</code></td><td>free / line、背景色をライン内で使用する真偽値、ファミコン luminance / oklab、MSX rgb / oklab。機種ごとの描画制約は自動適用。</td></tr>
-<tr><td><code>layout, columns, rows</code></td><td>grid / row / column / square。列・行は1〜256の整数。</td></tr>
+<tr><td><code>layout, columns</code></td><td>grid / row / column / square。横の個数は1〜256の整数。行は必要なだけ下へ足す。</td></tr>
 <tr><td><code>tileScale, language</code></td><td>一覧倍率 auto / 0.5 / 1 / 2 / 3 / 4 / 5 / 6 / 7 / 8。名前表示 ja / en。</td></tr>
 <tr><td><code>saveFormat, codeFormat, base64, codeScope</code></td><td>保存形式 png / zip、AS CODE形式 js / python / json / text、Base64の真偽値、プレビュー one / all。</td></tr>
 <tr><td><code>tab, search, selected, fontMode</code></td><td>一度の <code>setOptions</code> でタブ、検索文字列、選択文字列、フォントモードも設定可能。fontMode の外部フォントロードも待機。</td></tr>
@@ -76,7 +76,7 @@ await api.waitIdle();
 api.snapshot();</pre></div>
 <h2>変換と保存</h2><table><thead><tr><th>呼び出し</th><th>返り値</th></tr></thead><tbody><tr><td><code>api.render(text, options?)</code></td><td>スプライトシートを描いた Canvas。</td></tr>
 <tr><td><code>api.renderTile(char, options?)</code></td><td>1文字ぶんの Canvas。<code>metadata</code> に自動左右対称の適用有無・判定値・対称軸のずれが付く。</td></tr>
-<tr><td><code>api.renderVariants(char, base?, variants, options?)</code></td><td>同じ文字を設定違いでまとめて描く。画面には触れず、再描画も待たないので、総当たりが1回の呼び出しで終わる。各結果に <code>metrics</code>（使用色数・不透明画素数・描画率・左右一致率・対称の判定値）が付く。<code>format</code> は canvas（既定）／png／code、<code>sheet:true</code> で全部を1枚の Canvas にも並べる。</td></tr><tr><td><code>api.toCode(text, options?)</code></td><td>AS CODE文字列。format: js / python / json / text、base64:true も指定可能。</td></tr><tr><td><code>await api.download(text, options?)</code></td><td>PNGまたはZIPを保存し、ファイル名を返す。format:'png' | 'zip'、filenameで保存名を指定。</td></tr></tbody></table><p>一回限りの <code>options</code> に <code>preset</code> を渡すと、その機種の色数・パレット・色の制約も一緒に切り替わります（画面の設定は変えません）。<code>palette</code> や <code>count</code> を同時に渡せば、そちらが優先されます。</p><p>これらの <code>options</code> は一回限りの描画設定です。<code>size</code>、<code>count</code>、<code>palette</code>、<code>symmetry</code>、<code>trim</code>、<code>layout</code>、<code>columns</code>、<code>rows</code> などを指定でき、画面状態は変更しません。画面側を変更するには <code>setOptions</code> を使います。文字列は1〜256文字、サイズは1〜128pxです。</p>
+<tr><td><code>api.renderVariants(char, base?, variants, options?)</code></td><td>同じ文字を設定違いでまとめて描く。画面には触れず、再描画も待たないので、総当たりが1回の呼び出しで終わる。各結果に <code>metrics</code>（使用色数・不透明画素数・描画率・左右一致率・対称の判定値）が付く。<code>format</code> は canvas（既定）／png／code、<code>sheet:true</code> で全部を1枚の Canvas にも並べる。</td></tr><tr><td><code>api.toCode(text, options?)</code></td><td>AS CODE文字列。format: js / python / json / text、base64:true も指定可能。</td></tr><tr><td><code>await api.download(text, options?)</code></td><td>PNGまたはZIPを保存し、ファイル名を返す。format:'png' | 'zip'、filenameで保存名を指定。</td></tr></tbody></table><p>一回限りの <code>options</code> に <code>preset</code> を渡すと、その機種の色数・パレット・色の制約も一緒に切り替わります（画面の設定は変えません）。<code>palette</code> や <code>count</code> を同時に渡せば、そちらが優先されます。</p><p>これらの <code>options</code> は一回限りの描画設定です。<code>size</code>、<code>count</code>、<code>palette</code>、<code>symmetry</code>、<code>trim</code>、<code>layout</code>、<code>columns</code> などを指定でき、画面状態は変更しません。画面側を変更するには <code>setOptions</code> を使います。文字列は1〜256文字、サイズは1〜128pxです。</p>
 <div class="example"><button type="button" class="copy">コードをコピー</button><pre>const canvas = api.render('😀👾', {size:16, layout:'row'});
 console.log(canvas.width, canvas.height);
 const source = api.toCode('😀👾', {format:'python', base64:true});

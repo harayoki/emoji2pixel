@@ -1,0 +1,25 @@
+Copyright (c) 2026 harayoki
+
+All rights reserved.
+
+このソフトウェアは開発中です。ページを開いて使うことと、
+そこで作ったドット絵を自由に使うことはできますが、
+ソフトウェア自体の複製・改変・再配布は許可していません。
+
+開発が落ち着いたら MIT License で公開する予定です。
+
+---
+
+This software is under development. You may use the published page and
+whatever pixel art you make with it, but copying, modifying and
+redistributing the software itself is not permitted for now.
+It is intended to be released under the MIT License later.
+
+---
+
+同梱のカラー絵文字フォント Noto Color Emoji は SIL Open Font License 1.1 で、
+この条件の対象外です。docs/LICENSE-noto-color-emoji.txt を参照してください。
+
+The bundled Noto Color Emoji font is licensed under the SIL Open Font
+License 1.1 and is not covered by the terms above; see
+docs/LICENSE-noto-color-emoji.txt.
