@@ -17,9 +17,15 @@ An open source licence is intended once development settles down.
 
 ---
 
-同梱のカラー絵文字フォント Noto Color Emoji は SIL Open Font License 1.1 で、
-この条件の対象外です。docs/LICENSE-noto-color-emoji.txt を参照してください。
+同梱のフォントはこの条件の対象外で、それぞれの配布元のライセンスに従います。
+Noto Color Emoji は SIL Open Font License 1.1、Bootstrap Icons は MIT License、
+Remix Icon は Apache License 2.0、Font Awesome Free はアイコンが CC BY 4.0・
+フォントが SIL OFL 1.1 です。本文は docs/LICENSE-*.txt にあります。
+アイコンの一部は Font Awesome Free（https://fontawesome.com）によるものです。
 
-The bundled Noto Color Emoji font is licensed under the SIL Open Font
-License 1.1 and is not covered by the terms above; see
-docs/LICENSE-noto-color-emoji.txt.
+The bundled fonts are not covered by the terms above and follow their own
+licences: Noto Color Emoji under SIL Open Font License 1.1, Bootstrap Icons
+under the MIT License, Remix Icon under the Apache License 2.0, and Font
+Awesome Free with its icons under CC BY 4.0 and its fonts under SIL OFL 1.1.
+See docs/LICENSE-*.txt. Some icons are from Font Awesome Free
+(https://fontawesome.com).
